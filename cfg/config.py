@@ -10,6 +10,7 @@ class MambaConfig:
     residual_in_fp32: bool = True
     fused_add_norm: bool = True
     padd_vocab_size_multiple: int = 8
+    tie_embeddings = None
     
     def to_json_string(self):
         return json.dumps(asdict(self))
