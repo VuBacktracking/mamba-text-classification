@@ -15,7 +15,7 @@ huggingface-hub==0.22.2
 idna==3.7
 Jinja2==3.1.3
 MarkupSafe==2.1.5
-mamba-ssm
+mamba-ssm==1.2.0.post1
 mpmath==1.3.0
 multidict==6.0.5
 multiprocess==0.70.16
@@ -29,13 +29,16 @@ pyarrow-hotfix==0.6
 python-dateutil==2.9.0.post0
 pytz==2024.1
 PyYAML==6.0.1
+regex==2024.4.28
 requests==2.31.0
 responses==0.18.0
 safetensors==0.4.3
 six==1.16.0
 sympy==1.12
+tokenizers==0.19.1
 torch==2.3.0
 tqdm==4.66.2
+transformers==4.40.1
 typing_extensions==4.11.0
 tzdata==2024.1
 urllib3==2.2.1
