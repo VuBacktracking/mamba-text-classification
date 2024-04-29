@@ -18,19 +18,19 @@ class MambaTextClassification(MambaLMHeadModel):
     ) -> None:
         super().__init__(config, initializer_cfg, device, dtype)
         
-        # Tạo một đầu phân loại sử dụng MambaClassificationHead với kích thước đầu vào là d_model và số lớp là 2.
+        # Create a classification head using MambaClassificationHead with input size of d_model and number of classes 2.
         self.classification_head = MambaClassificationHead(d_model=config.d_model, num_classes=2)
         
         del self.lm_head
     
     def forward(self, input_ids, attention_mask = None, labels = None):
-        # Truyền input_ids qua model gốc để nhận hidden_states.
+        # Pass input_ids through the backbone model to receive hidden_states.
         hidden_states = self.backbone(input_ids)
         
-        # Lấy trung bình của hidden_states theo chiều thứ 2 để tạo ra [CLS] feature đại điện
+        # Take the mean of hidden_states along the second dimension to create a representative [CLS] feature.
         mean_hidden_states = hidden_states.mean(dim = 1)
         
-        # Đưa mean_hidden_states qua đầu phân loại để nhận logits.
+        # Pass mean_hidden_states through the classification head to get logits.
         logits = self.classification_head(mean_hidden_states)
         
         if labels is None:
@@ -39,7 +39,7 @@ class MambaTextClassification(MambaLMHeadModel):
         else:
             ClassificationOutput = namedtuple("ClassificationOutput", ["loss", "logits"])
             
-            # Sử dụng hàm mất mát CrossEntropyLoss để tính loss.
+            # Use CrossEntropyLoss loss function to compute the loss.
             loss_fct = nn.CrossEntropyLoss()
             loss = loss_fct(logits, labels)
             
@@ -57,17 +57,20 @@ class MambaTextClassification(MambaLMHeadModel):
     
     @classmethod
     def from_pretrained(cls, pretrained_model_name, device = None, dtype = None, **kwargs):
-        # Tải cấu hình từ model đã được train trước đó.
+        # Load the configuration from the pre-trained model.
         config_data = load_config_hf(pretrained_model_name)
         config = MambaConfig(**config_data)
         
-        # Khởi tạo model từ cấu hình và chuyển nó đến thiết bị và kiểu dữ liệu mong muốn.
+        # Initialize the model from the configuration and move it to the desired device and data type.
         model = cls(config, device = device, dtype = dtype, **kwargs)
         
-        # Tải trạng thái model đã được train trước đó.
+        # Load the state of the pre-trained model.
         model_state_dict = load_state_dict_hf(pretrained_model_name, device = device, dtype = dtype)
         model.load_state_dict(model_state_dict , strict=False)
         
-        # In ra các tham số embedding mới được khởi tạo.
-        print("Newly initialized embedding:", set(model.state_dict() .keys()) - set(model_state_dict.keys()))
-        return model
+        # Print the newly initialized embedding parameters.
+        print (" Newly initialized embedding :", 
+              set(model.state_dict().keys()) - set(model_state_dict.keys())
+        )
+
+        return model.to(device)
