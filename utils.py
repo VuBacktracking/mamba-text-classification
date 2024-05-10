@@ -1,18 +1,19 @@
 import numpy as np
 import evaluate
 
-# Tải module "accuracy" từ thư viện evaluate.
+# Load the "accuracy" module from the evaluate library.
 accuracy = evaluate.load("accuracy")
-# Tạo chức năng tiền xử lý để mã hóa văn bản và cắt bớt các chuỗi không dài hơn độ dài đầu vào tối đa của mã thông báo
+
+# Create a preprocessing function to encode text and truncate strings longer than the maximum input token length.
 def preprocess_function(tokenizer, examples):
-    samples = tokenizer(examples["text"], truncation = True)
+    samples = tokenizer(examples["text"], truncation=True)
     samples.pop('attention_mask')
     return samples
 
 def compute_metrics(eval_pred):
-    predictions, labels =eval_pred
-    # Lấy chỉ số của lớp có xác suất cao nhất trong predictions.
-    predictions = np.argmax(predictions, axis = 1)
+    predictions, labels = eval_pred
+    # Get the index of the class with the highest probability in predictions.
+    predictions = np.argmax(predictions, axis=1)
     
-    # Sử dụng module "accuracy" để tính độ chính xác dựa trên predictions và labels.
-    return accuracy.compute(predictions=predictions , references=labels)
+    # Use the "accuracy" module to compute accuracy based on predictions and labels.
+    return accuracy.compute(predictions=predictions, references=labels)
