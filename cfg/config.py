@@ -1,5 +1,5 @@
 import json
-from dataclasses import field, asdict
+from dataclasses import dataclass , field , asdict
 
 class MambaConfig:
     d_model: int = 2560
